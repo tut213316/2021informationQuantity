@@ -69,7 +69,10 @@ public class Frequencer implements FrequencerInterface {
 
 	if(debugMode) { showVariables(); }
 	if (targetLength > 0) {
-            for(int start = 0; start<spaceLength; start++) {
+	    if (spaceLength < targetLength) {
+                return 0;
+            }
+            for(int start = 0; start<spaceLength-targetLength+1; start++) {
                 boolean abort = false;
                 for(int i = 0; i<targetLength; i++) {
                     if(myTarget[i] != mySpace[start+i]) { abort = true; break; }
@@ -87,29 +90,28 @@ public class Frequencer implements FrequencerInterface {
     @Override
     public int subByteFrequency(int start, int end) {
 	int count = 0;
-	int targetLength;
+	int subLength = end - start;
+	int spaceLength;
 
-	if (myTarget == null) {
-	    targetLength = 0;
+	if (mySpace == null) {
+		spaceLength = 0;
 	}
 	else {
-            targetLength = myTarget.length;
+		spaceLength = mySpace.length;
 	}
 
 	if (debugMode) { showVariables(); }
-	if (targetLength > 0) {
-	    for (int i = start; i < end; i++) {
-		boolean abort = false;
-		for (int j = 0; j < targetLength; j++) {
-		    if (myTarget[j] != mySpace[i+j]) { abort = true; break; }
-		}
-		if (abort == false) { count++; }
+	if (spaceLength < subLength) {
+		return 0;
+	}
+	for (int i = 0; i < spaceLength-subLength+1; i++) {
+	    boolean abort = false;
+	    for (int j = 0; j < subLength; j++) {
+	        if (myTarget[j+start] != mySpace[i+j]) { abort = true; break; }
 	    }
+	    if (abort == false) { count++; }
 	}
 
-	if (targetLength == 0) {
-	    count = -1;
-	}
 	if (debugMode) { System.out.printf("%10d\n", count); }
         return count;
     }
