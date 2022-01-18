@@ -48,9 +48,6 @@ public class Frequencer implements FrequencerInterface{
                 }
                 System.out.write('\n');
             }
-	    System.out.println("i=0, j=1: "+suffixCompare(0, 1));
-	    System.out.println("i=1, j=0: "+suffixCompare(1, 0));
-	    System.out.println("i=0, j=0: "+suffixCompare(0, 0));
         }
     }
 
@@ -264,11 +261,27 @@ public class Frequencer implements FrequencerInterface{
         //    if suffix_i is "Ho Hi Ho", and target_j_k is "Ho", 
         //            targetCompare should return 0;
         //    if suffix_i is "Ho Hi Ho", and suffix_j is "Ho", 
-        //            suffixCompare should return -1.
+        //            suffixCompare should return 1.
         //
         // ここに比較のコードを書け 
-        //
-        return 0; // この行は変更しなければならない。
+        int suffixLength = mySpace.length - i;
+        int targetLength = k - j;
+
+        // target_j_kのほうが長いときは必ず suffix_i < target_j_k
+        if (suffixLength < targetLength) {
+            return -1;
+        }
+	
+        // suffix_iの先頭とtarget_j_kを比較
+        for (int ofs = 0; ofs < targetLength; ofs++) {
+            if (mySpace[i+ofs] > myTarget[j+ofs]) {
+                return 1;
+            }
+            else if (mySpace[i+ofs] < myTarget[j+ofs]) {
+                return -1;
+            }
+        }
+        return 0; // suffix_i == target_j_k
     }
 
 
@@ -292,7 +305,7 @@ public class Frequencer implements FrequencerInterface{
 
         // It returns the index of the first suffix 
         // which is equal or greater than target_start_end.                         
-	// Suppose target is set "Ho Ho Ho Ho"
+        // Suppose target is set "Ho Ho Ho Ho"
         // if start = 0, and end = 2, target_start_end is "Ho".
         // if start = 0, and end = 3, target_start_end is "Ho ".
         // Assuming the suffix array is created from "Hi Ho Hi Ho",                 
@@ -301,8 +314,16 @@ public class Frequencer implements FrequencerInterface{
         // if target_start_end is "Ho ", it will return 6.                
         //                                                                          
         // ここにコードを記述せよ。                                                 
-        //                                                                         
-        return suffixArray.length; //このコードは変更しなければならない。          
+
+        // 開始位置
+        int sidx = 0;
+        // 先頭が一致するSuffixが見つかるまでループ
+        for (; sidx < suffixArray.length; sidx++) {
+            if (targetCompare(suffixArray[sidx], start, end) == 0) {
+                break;
+            }
+        }
+        return sidx;
     }
 
     private int subByteEndIndex(int start, int end) {
@@ -333,8 +354,16 @@ public class Frequencer implements FrequencerInterface{
         // if target_start_end is"i", it will return 9 for "Hi Ho Hi Ho".    
         //                                                                   
         //　ここにコードを記述せよ                                           
-        //                                                                   
-        return suffixArray.length; // この行は変更しなければならない、       
+
+        // target_start_endと先頭が初めて一致するSuffixのインデックスを取得
+        int lidx = subByteStartIndex(start, end);
+        // Suffixの先頭とtarget_start_endが一致しなくなるまでループ
+        for (; lidx < suffixArray.length; lidx++) {
+            if (targetCompare(suffixArray[lidx], start, end) != 0) {
+                break;
+            }
+        }
+        return lidx;
     }
 
 
@@ -381,6 +410,9 @@ public class Frequencer implements FrequencerInterface{
             //                                         
             // ****  Please write code to check subByteStartIndex, and subByteEndIndex
             //
+            System.out.println("Space=\"Hi Ho Hi Ho\", Target=\"H\", [start,end)=[0,1)");
+            System.out.println("SubByteStartIndex: "+frequencerObject.subByteStartIndex(0, 1));
+            System.out.println("SubByteEndIndex: "+frequencerObject.subByteEndIndex(0, 1));
 
             int result = frequencerObject.frequency();
             System.out.print("Freq = "+ result+" ");

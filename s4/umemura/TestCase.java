@@ -1,4 +1,4 @@
-package s4.umemura; // Please modify to s4.Bnnnnnn, where nnnnnn is your student ID. 
+package s4.umemura;
 import java.lang.*;
 import s4.specification.*;
 
@@ -45,6 +45,11 @@ public class TestCase {
 	    myObject.setTarget("".getBytes());
 	    freq = myObject.frequency();
 	    if(-1 != freq) { System.out.println("frequency() should return -1, when target is empty, but return "+freq); c++; }
+	    myObject = new Frequencer();
+	    myObject.setSpace("".getBytes());
+	    myObject.setTarget("".getBytes());
+	    freq = myObject.frequency();
+	    if(-1 != freq) { System.out.println("frequency() for AAA should return -1, when taget empty string. But it returns "+freq); c++; }
 	    myObject = new Frequencer();
 	    myObject.setSpace("AAA".getBytes());
 	    if(-1 != freq) { System.out.println("frequency() for AAA should return -1, when target is  not set. But it returns  "+freq); c++; }	
