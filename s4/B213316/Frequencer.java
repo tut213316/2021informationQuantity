@@ -1,5 +1,6 @@
 package s4.B213316;  // ここは、かならず、自分の名前に変えよ。
 import java.lang.*;
+import java.util.Random;    // 乱択クイックソートのため
 import s4.specification.*;
 
 
@@ -27,6 +28,8 @@ public class Frequencer implements FrequencerInterface{
     boolean spaceReady = false;
 
     int []  suffixArray; // Suffix Arrayの実装に使うデータの型をint []とせよ。
+
+    private Random rnd = new Random();
 
 
     // The variable, "suffixArray" is the sorted array of all suffixes of mySpace.                                    
@@ -72,35 +75,41 @@ public class Frequencer implements FrequencerInterface{
 
         // ここにコードを記述せよ 
 
-	// 接頭辞が同じなら長いほうが大きい
-
-	int spaceLength = mySpace.length;	
-	int loopCount = spaceLength - (i > j ? i : j);	// 接尾辞比較のループ長
-
-	for (int k = 0; k < loopCount; k++) {
-		if (mySpace[k+i] < mySpace[k+j]) {	// suffix_i[k] < suffix_j[k]  ==>  suffix_i < suffix_j
-			return -1;
-		}
-		else if (mySpace[k+i] > mySpace[k+j]) {	// suffix_i[k] > suffix_j[k]  ==>  suffix_i > suffix_j
-			return 1;
-		}
-	}
-
-	// 接頭辞が同じとき
-	if (i == j) {		// suffix_i == suffix_j
-		return 0;
-	}
-	else if (i < j) {	// suffix_i > suffix_j
-		return 1;
-	}
-	else {			// suffix_i < suffix_j
-		return -1;
-	}
+        // 接頭辞が同じなら長いほうが大きい
+        
+        int spaceLength = mySpace.length;	
+        int loopCount = spaceLength - (i > j ? i : j);	// 接尾辞比較のループ長
+        
+        for (int k = 0; k < loopCount; k++) {
+            if (mySpace[k+i] < mySpace[k+j]) {	// suffix_i[k] < suffix_j[k]  ==>  suffix_i < suffix_j
+       	        return -1;
+            }
+            else if (mySpace[k+i] > mySpace[k+j]) {	// suffix_i[k] > suffix_j[k]  ==>  suffix_i > suffix_j
+                return 1;
+            }
+        }
+        
+        // 接頭辞が同じとき
+        if (i == j) {		// suffix_i == suffix_j
+            return 0;
+        }
+        else if (i < j) {	// suffix_i > suffix_j
+            return 1;
+        }
+        else {			// suffix_i < suffix_j
+            return -1;
+        }
     }
 
     public void setSpace(byte []space) { 
         // suffixArrayの前処理は、setSpaceで定義せよ。
-        mySpace = space; if(mySpace.length>0) spaceReady = true;
+        mySpace = space;
+        if (mySpace.length > 0) {
+            spaceReady = true;
+        }
+        else {
+            return;
+        }
         // First, create unsorted suffix array.
         suffixArray = new int[space.length];
         // put all suffixes in suffixArray.
@@ -123,7 +132,49 @@ public class Frequencer implements FrequencerInterface{
         //   suffixArray[ 1]= 1:BA
         //   suffixArray[ 2]= 0:CBA
         // のようになるべきである。
-        merge_sort(suffixArray, 0, space.length - 1);
+        quickSort(suffixArray, 0, space.length);
+    }
+
+    // arr[i]とarr[j]の値を入れ替える
+    private void swap(int arr[], int i, int j) {
+        int tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
+
+    // 乱択クイックソート
+    private void quickSort(int arr[], int le, int ri) {
+        // 終了条件
+        if (ri - le <= 1) return;
+        if (ri - le == 2) {
+            if (suffixCompare(arr[le], arr[le+1]) == 1) {
+                swap(arr, le, le+1);
+            }
+            return;
+        }
+        // ランダムに選んだピボットでarrを分割
+        // 処理後のarrは，ピボットの左側にピボット未満の値が集まり，右側にピボット以上の値が集まるようになる
+        int pivot = rnd.nextInt(ri-le) + le;
+        swap(arr, le, pivot);
+        pivot = le;
+        int nextPivot = le;
+        int biggerIdx = ri-1;
+        for (int i = le+1; i < ri; i++) {
+            if (nextPivot >= biggerIdx) break;
+
+            if (suffixCompare(arr[i], arr[pivot]) == -1) {    // arr[i] < arr[pivot]
+                nextPivot++;
+            }
+            else {
+                swap(arr, i--, biggerIdx--);
+            }
+        }
+        swap(arr, pivot, nextPivot);
+        pivot = nextPivot;
+        
+        // 分割した各区間をソートする
+        quickSort(arr, le, pivot);      // 左側
+        quickSort(arr, pivot+1, ri);    // 右側
     }
 
     // merge()
@@ -315,6 +366,7 @@ public class Frequencer implements FrequencerInterface{
         //                                                                          
         // ここにコードを記述せよ。                                                 
 
+	// 二分探索，やろう！
         // 開始位置
         int sidx = 0;
         // 先頭が一致するSuffixが見つかるまでループ
@@ -355,6 +407,7 @@ public class Frequencer implements FrequencerInterface{
         //                                                                   
         //　ここにコードを記述せよ                                           
 
+	// 二分探索，やろう！
         // target_start_endと先頭が初めて一致するSuffixのインデックスを取得
         int lidx = subByteStartIndex(start, end);
         // Suffixの先頭とtarget_start_endが一致しなくなるまでループ
