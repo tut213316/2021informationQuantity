@@ -24,10 +24,10 @@ public class InformationEstimator implements InformationEstimatorInterface {
     FrequencerInterface myFrequencer;  // Object for counting frequency
 
     private void showVariables() {
-	for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
-	System.out.write(' ');
-	for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
-	System.out.write(' ');
+        for(int i=0; i< mySpace.length; i++) { System.out.write(mySpace[i]); }
+        System.out.write(' ');
+        for(int i=0; i< myTarget.length; i++) { System.out.write(myTarget[i]); }
+        System.out.write(' ');
     }
 
     byte[] subBytes(byte[] x, int start, int end) {
@@ -40,7 +40,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
 
     // IQ: information quantity for a count, -log2(count/sizeof(space))
     double iq(int freq) {
-        return  - Math.log10((double) freq / (double) mySpace.length)/ Math.log10((double) 2.0);
+        return  - Math.log10((double) freq / (double) mySpace.length) / Math.log10((double) 2.0);
     }
 
     @Override
@@ -56,10 +56,19 @@ public class InformationEstimator implements InformationEstimatorInterface {
 
     @Override
     public double estimation(){
+        if (myTarget == null || myTarget.length == 0) {
+            if (debugMode) { System.out.println("myTarget is not set, or its length is zero!"); }
+            return 0.0;
+        }
+        if (mySpace == null || mySpace.length == 0) {
+            if (debugMode) { System.out.println("mySpace is not set, or its length is zero!"); }
+            return Double.MAX_VALUE;
+        }
         boolean [] partition = new boolean[myTarget.length+1];
         int np = 1<<(myTarget.length-1);
         double value = Double.MAX_VALUE; // value = mininimum of each "value1".
-	if(debugMode) { showVariables(); }
+
+        if(debugMode) { showVariables(); }
         if(debugMode) { System.out.printf("np=%d length=%d ", np, +myTarget.length); }
 
         for(int p=0; p<np; p++) { // There are 2^(n-1) kinds of partitions.
@@ -95,24 +104,60 @@ public class InformationEstimator implements InformationEstimatorInterface {
             // Get the minimal value in "value"
             if(value1 < value) value = value1;
         }
-	if(debugMode) { System.out.printf("%10.5f\n", value); }
+
+        if(debugMode) { System.out.printf("%10.5f\n", value); }
+
         return value;
     }
 
     public static void main(String[] args) {
         InformationEstimator myObject;
         double value;
-	debugMode = true;
+        debugMode = true;
+        /* myTarget and mySpace are not set. value must be 0.0. */
+        myObject = new InformationEstimator();
+        value = myObject.estimation();
+        System.out.printf("%10.5f\n", value);
+        /* myTarget are not set. value must be 0.0. */
+        myObject = new InformationEstimator();
+        myObject.setSpace("3210321001230123".getBytes());
+        value = myObject.estimation();
+        System.out.printf("%10.5f\n", value);
+        /* length of myTarget is zero. value must be 0.0. */
+        myObject = new InformationEstimator();
+        myObject.setSpace("3210321001230123".getBytes());
+        myObject.setTarget("".getBytes());
+        value = myObject.estimation();
+        System.out.printf("%10.5f\n", value);
+        /* mySpace is not set. value must be Double.MAX_VALUE. */
+        myObject = new InformationEstimator();
+        myObject.setTarget("0".getBytes());
+        value = myObject.estimation();
+        System.out.printf("%10.5f\n", value);
+        /* length of mySpace is zero (true value is infinite). value must be Double.MAX_VALUE. */
+        myObject = new InformationEstimator();
+        myObject.setSpace("".getBytes());
+        myObject.setTarget("0".getBytes());
+        value = myObject.estimation();
+        System.out.printf("%10.5f\n", value);
+        /* mySpace and myTarget are set */
         myObject = new InformationEstimator();
         myObject.setSpace("3210321001230123".getBytes());
         myObject.setTarget("0".getBytes());
         value = myObject.estimation();
+        System.out.printf("%10.5f\n", value);
+
         myObject.setTarget("01".getBytes());
         value = myObject.estimation();
+        System.out.printf("%10.5f\n", value);
+
         myObject.setTarget("0123".getBytes());
         value = myObject.estimation();
+        System.out.printf("%10.5f\n", value);
+
         myObject.setTarget("00".getBytes());
         value = myObject.estimation();
+        System.out.printf("%10.5f\n", value);
     }
 }
 
