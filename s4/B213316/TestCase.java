@@ -130,7 +130,7 @@ public class TestCase {
     try {
         InformationEstimatorInterface myObject;
         double value;
-        System.out.println("checking s4.slow.InformationEstimator");
+        System.out.println("checking InformationEstimator");
         /* myTarget and mySpace are not set. value must be 0.0. */
         myObject = new InformationEstimator();
         value = myObject.estimation();
