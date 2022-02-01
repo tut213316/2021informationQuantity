@@ -34,19 +34,29 @@ public class TestCase {
 
     public static void main(String[] args) {
 	try {
-	    FrequencerInterface  myObject;
+	    //FrequencerInterface  myObject;
+	    Frequencer  myObject;
 	    int freq;
 	    System.out.println("checking Frequencer");
 
-	    // This is smoke test
+		// This is smoke test
 	    myObject = new Frequencer();
 	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
 	    myObject.setTarget("H".getBytes());
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
 	    // Write your testCase here
+	    myObject.setSpace("Hi".getBytes());
+	    myObject.setTarget("Hi Ho Hi Ho".getBytes());
+	    freq = myObject.frequency();
+	    assert freq == 0: "Hi, Hi Ho Hi Ho:" + freq;
 
-
+		myObject.setSpace("Hi Ho Hi Ho".getBytes());
+    	myObject.printSuffixArray();
+    	myObject.setTarget("Ho ".getBytes());
+		int count = myObject.subByteFrequency(0, 2);
+		System.out.println("Ho, Hi Ho Hi Ho, count=" + count);
+		assert count == 2: "Ho, Hi Ho Hi Ho" + count;
 	}
 	catch(Exception e) {
 	    System.out.println("Exception occurred in Frequencer Object");

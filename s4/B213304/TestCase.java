@@ -8,11 +8,11 @@ interface FrequencerInterface {     // This interface provides the design for fr
     void setSpace(byte[]  space);  // set the data to be searched target from.
     int frequency(); //It return -1, when TARGET is not set or TARGET's length is zero
                     //Otherwise, it return 0, when SPACE is not set or Space's length is zero
-                    //Otherwise, get the frequency of TAGET in SPACE
-    int subByteFrequency(int start, int end);
-    // get the frequency of subByte of taget, i.e target[start], taget[start+1], ... , target[end-1].
-    // For the incorrect value of START or END, the behavior is undefined.
-}
+                    //                    //Otherwise, get the frequency of TAGET in SPACE
+                    //                        int subByteFrequency(int start, int end);
+                    //                            // get the frequency of subByte of taget, i.e target[start], taget[start+1], ... , target[end-1].
+                    //                                // For the incorrect value of START or END, the behavior is undefined.
+                    //                                }
 */
 
 /*
@@ -22,22 +22,21 @@ public interface InformationEstimatorInterface{
     void setSpace(byte space[]); // set data for sample space to computer probability
     double estimation(); // It returns 0.0 when the target is not set or Target's length is zero;
 // It returns Double.MAX_VALUE, when the true value is infinite, or space is not set.
-// The behavior is undefined, if the true value is finete but larger than Double.MAX_VALUE.
-// Note that this happens only when the space is unreasonably large. We will encounter other problem anyway.
-// Otherwise, estimation of information quantity, 
-}                        
+// // The behavior is undefined, if the true value is finete but larger than Double.MAX_VALUE.
+// // Note that this happens only when the space is unreasonably large. We will encounter other problem anyway.
+// // Otherwise, estimation of information quantity, 
+// }  
 */
-
-
-public class TestCase {
+class TestCase {
     static boolean success = true;
 
     public static void main(String[] args) {
 	try {
 	    FrequencerInterface  myObject;
+	    Frequencer  myTestObject; 
 	    int freq;
+	    int position;
 	    System.out.println("checking Frequencer");
-
 	    // This is smoke test
 	    myObject = new Frequencer();
 	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
@@ -45,14 +44,18 @@ public class TestCase {
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
 	    // Write your testCase here
-
-
+	    myTestObject = new Frequencer();
+	    myTestObject.setSpace("Hi H".getBytes());
+	    myTestObject.setTarget("Hi".getBytes());
+	    freq = myTestObject.frequency();
+	    assert freq == 1: "Hi H, Hi: " + freq;
 	}
 	catch(Exception e) {
 	    System.out.println("Exception occurred in Frequencer Object");
 	    success = false;
 	}
 
+	/*
 	try {
 	    InformationEstimatorInterface myObject;
 	    double value;
@@ -76,7 +79,9 @@ public class TestCase {
 	    System.out.println("Exception occurred in InformationEstimator Object");
 	    success = false;
 	}
+	*/
         if(success) { System.out.println("TestCase OK"); } 
     }
 }	    
-	    
+	
+
