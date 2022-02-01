@@ -178,6 +178,10 @@ public class TestCase {
         myObject.setTarget("00".getBytes());
         value = myObject.estimation();
         if((value < 3.9999) || (4.0001 <value)) { System.out.println("IQ for 00 in 3210321001230123 should be 4.0. But it returns "+value); c++; }
+        myObject.setTarget("456".getBytes());
+        value = myObject.estimation();
+        if(value < Double.MAX_VALUE) { System.out.println("IQ for 456 in 3210321001230123 should be Double.MAX_VALUE(infinite). But it returns "+value); c++; }
+
     }
     catch(Exception e) {
         System.out.println("Exception occurred: STOP");
