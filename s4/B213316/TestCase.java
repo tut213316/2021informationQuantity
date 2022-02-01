@@ -97,6 +97,12 @@ public class TestCase {
         myObject.setTarget("Ho".getBytes());
         freq = myObject.frequency();
         if(2 != freq) {System.out.println("frequency() for Hi_Ho_Hi_Ho, should return 2, when taget is Ho. But it returns "+freq); c++; }
+        // targetCompareがtarget_j_kがsuffix_iより長いとき常に-1を返す実装だと落ちるケース
+        myObject = new Frequencer();
+        myObject.setSpace("abbzza".getBytes());
+        myObject.setTarget("bbzza".getBytes());
+        freq = myObject.frequency();
+        if(1 != freq) {System.out.println("frequency() for abbzza, should return 2, when taget is bbzza. But it returns "+freq); c++; }
         /* please note subByteFreqency(0,0) is considered illeagal specification, and you should not include this case */
         myObject = new Frequencer();
         myObject.setSpace("AAAB".getBytes());
